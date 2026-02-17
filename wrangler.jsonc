@@ -2,6 +2,13 @@
   "name": "sodiums-hangout",
   "compatibility_date": "2026-02-17",
   "assets": {
-    "directory": "."
-  }
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "routes": [
+    {
+      "pattern": "*",
+      "custom_domain": false
+    }
+  ]
 }
