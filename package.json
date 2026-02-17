@@ -2,10 +2,7 @@
   "name": "sodiums-hangout",
   "version": "1.0.0",
   "description": "Sodium's Hangout - Personal website",
-  "scripts": {
-    "build": "echo 'No build step needed for static site'",
-    "deploy": "echo 'Deploy via Cloudflare Pages'"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "MIT"
