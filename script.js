@@ -13,11 +13,11 @@ function initializeWebsite() {
         updateContact();
     }
     
-    // Initialize tabs
-    initializeTabs();
-    
     // Initialize mobile menu
     initializeMobileMenu();
+    
+    // Initialize smooth scroll
+    initializeSmoothScroll();
 }
 
 // Update branding from config
@@ -149,113 +149,6 @@ function updateContact() {
     }
 }
 
-// Tab functionality
-function initializeTabs() {
-    const navLinks = document.querySelectorAll('.nav-link[data-tab]');
-    const footerLinks = document.querySelectorAll('.footer-links a[data-tab]');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    // Function to switch tabs (make it globally accessible) - Sliding Glass Door Effect
-    window.switchTab = function switchTab(tabName) {
-        // Find current active tab
-        const currentActive = document.querySelector('.tab-content.active');
-        
-        // If switching to a different tab, add leaving animation
-        if (currentActive && currentActive.id !== tabName) {
-            currentActive.classList.add('leaving');
-            currentActive.classList.remove('active');
-            
-            // Wait for exit animation, then switch
-            setTimeout(() => {
-                currentActive.classList.remove('leaving');
-                currentActive.style.display = 'none';
-                
-                // Update active nav link
-                navLinks.forEach(link => {
-                    if (link.getAttribute('data-tab') === tabName) {
-                        link.classList.add('active');
-                    } else {
-                        link.classList.remove('active');
-                    }
-                });
-                
-                // Show new tab with animation
-                const newTab = document.getElementById(tabName);
-                if (newTab) {
-                    newTab.style.display = 'block';
-                    // Force reflow to trigger animation
-                    newTab.offsetHeight;
-                    newTab.classList.add('active');
-                }
-                
-                // Close mobile menu if open
-                const navMenu = document.getElementById('navMenu');
-                const navToggle = document.getElementById('navToggle');
-                if (navMenu && navMenu.classList.contains('active')) {
-                    navMenu.classList.remove('active');
-                    navToggle.classList.remove('active');
-                }
-                
-                // Scroll to top
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 300);
-        } else if (!currentActive) {
-            // First load - no animation needed
-            navLinks.forEach(link => {
-                if (link.getAttribute('data-tab') === tabName) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-            
-            tabContents.forEach(content => {
-                if (content.id === tabName) {
-                    content.style.display = 'block';
-                    content.classList.add('active');
-                } else {
-                    content.style.display = 'none';
-                    content.classList.remove('active');
-                }
-            });
-        }
-    }
-    
-    // Add click handlers to nav links
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const tabName = link.getAttribute('data-tab');
-            switchTab(tabName);
-        });
-    });
-    
-    // Add click handlers to footer links
-    footerLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const tabName = link.getAttribute('data-tab');
-            switchTab(tabName);
-        });
-    });
-    
-    // Handle hash changes (for direct links)
-    window.addEventListener('hashchange', () => {
-        const hash = window.location.hash.substring(1);
-        if (hash && ['home', 'links', 'about', 'custom'].includes(hash)) {
-            switchTab(hash);
-        }
-    });
-    
-    // Set initial tab based on hash or default to home
-    const hash = window.location.hash.substring(1);
-    if (hash && ['home', 'links', 'about', 'custom'].includes(hash)) {
-        switchTab(hash);
-    } else {
-        switchTab('home');
-    }
-}
-
 // Mobile Navigation Toggle
 function initializeMobileMenu() {
     const navToggle = document.getElementById('navToggle');
@@ -278,41 +171,25 @@ function initializeMobileMenu() {
     }
 }
 
-// Handle buttons with data-tab attribute
-document.querySelectorAll('a[data-tab]').forEach(button => {
-    button.addEventListener('click', function (e) {
-        e.preventDefault();
-        const tabName = this.getAttribute('data-tab');
-        const switchTab = window.switchTab || (() => {
-            // Fallback: find and call switchTab function
-            const navLinks = document.querySelectorAll('.nav-link[data-tab]');
-            navLinks.forEach(link => {
-                if (link.getAttribute('data-tab') === tabName) {
-                    link.click();
+// Smooth scroll for anchor links
+function initializeSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href !== '#') {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
                 }
-            });
-        });
-        switchTab(tabName);
-    });
-});
-
-// Smooth scroll for anchor links (only if no data-tab)
-document.querySelectorAll('a[href^="#"]:not([data-tab])').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href !== '#') {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                const offsetTop = target.offsetTop - 70;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
             }
-        }
+        });
     });
-});
+}
 
 // Navbar background on scroll
 let lastScroll = 0;
@@ -322,10 +199,10 @@ if (navbar) {
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
         
-        if (currentScroll > 100) {
-            navbar.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+        if (currentScroll > 50) {
+            navbar.style.background = 'rgba(15, 23, 42, 0.6)';
         } else {
-            navbar.style.boxShadow = '0 2px 4px 0 rgba(0, 0, 0, 0.1)';
+            navbar.style.background = 'rgba(15, 23, 42, 0.4)';
         }
         
         lastScroll = currentScroll;
@@ -353,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const animatedElements = document.querySelectorAll('.link-card, .about-card');
         animatedElements.forEach(el => {
             el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
+            el.style.transform = 'translateY(20px)';
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
         });
