@@ -155,8 +155,8 @@ function initializeTabs() {
     const footerLinks = document.querySelectorAll('.footer-links a[data-tab]');
     const tabContents = document.querySelectorAll('.tab-content');
     
-    // Function to switch tabs
-    function switchTab(tabName) {
+    // Function to switch tabs (make it globally accessible)
+    window.switchTab = function switchTab(tabName) {
         // Update active nav link
         navLinks.forEach(link => {
             if (link.getAttribute('data-tab') === tabName) {
@@ -244,11 +244,29 @@ function initializeMobileMenu() {
     }
 }
 
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+// Handle buttons with data-tab attribute
+document.querySelectorAll('a[data-tab]').forEach(button => {
+    button.addEventListener('click', function (e) {
+        e.preventDefault();
+        const tabName = this.getAttribute('data-tab');
+        const switchTab = window.switchTab || (() => {
+            // Fallback: find and call switchTab function
+            const navLinks = document.querySelectorAll('.nav-link[data-tab]');
+            navLinks.forEach(link => {
+                if (link.getAttribute('data-tab') === tabName) {
+                    link.click();
+                }
+            });
+        });
+        switchTab(tabName);
+    });
+});
+
+// Smooth scroll for anchor links (only if no data-tab)
+document.querySelectorAll('a[href^="#"]:not([data-tab])').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
-        if (href !== '#' && !this.hasAttribute('data-tab')) {
+        if (href !== '#') {
             e.preventDefault();
             const target = document.querySelector(href);
             if (target) {
