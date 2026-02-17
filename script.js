@@ -155,36 +155,70 @@ function initializeTabs() {
     const footerLinks = document.querySelectorAll('.footer-links a[data-tab]');
     const tabContents = document.querySelectorAll('.tab-content');
     
-    // Function to switch tabs (make it globally accessible)
+    // Function to switch tabs (make it globally accessible) - Sliding Glass Door Effect
     window.switchTab = function switchTab(tabName) {
-        // Update active nav link
-        navLinks.forEach(link => {
-            if (link.getAttribute('data-tab') === tabName) {
-                link.classList.add('active');
-            } else {
-                link.classList.remove('active');
-            }
-        });
+        // Find current active tab
+        const currentActive = document.querySelector('.tab-content.active');
         
-        // Update active tab content
-        tabContents.forEach(content => {
-            if (content.id === tabName) {
-                content.classList.add('active');
-            } else {
-                content.classList.remove('active');
-            }
-        });
-        
-        // Close mobile menu if open
-        const navMenu = document.getElementById('navMenu');
-        const navToggle = document.getElementById('navToggle');
-        if (navMenu && navMenu.classList.contains('active')) {
-            navMenu.classList.remove('active');
-            navToggle.classList.remove('active');
+        // If switching to a different tab, add leaving animation
+        if (currentActive && currentActive.id !== tabName) {
+            currentActive.classList.add('leaving');
+            currentActive.classList.remove('active');
+            
+            // Wait for exit animation, then switch
+            setTimeout(() => {
+                currentActive.classList.remove('leaving');
+                currentActive.style.display = 'none';
+                
+                // Update active nav link
+                navLinks.forEach(link => {
+                    if (link.getAttribute('data-tab') === tabName) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+                
+                // Show new tab with animation
+                const newTab = document.getElementById(tabName);
+                if (newTab) {
+                    newTab.style.display = 'block';
+                    // Force reflow to trigger animation
+                    newTab.offsetHeight;
+                    newTab.classList.add('active');
+                }
+                
+                // Close mobile menu if open
+                const navMenu = document.getElementById('navMenu');
+                const navToggle = document.getElementById('navToggle');
+                if (navMenu && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    navToggle.classList.remove('active');
+                }
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 300);
+        } else if (!currentActive) {
+            // First load - no animation needed
+            navLinks.forEach(link => {
+                if (link.getAttribute('data-tab') === tabName) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            tabContents.forEach(content => {
+                if (content.id === tabName) {
+                    content.style.display = 'block';
+                    content.classList.add('active');
+                } else {
+                    content.style.display = 'none';
+                    content.classList.remove('active');
+                }
+            });
         }
-        
-        // Scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
     // Add click handlers to nav links
