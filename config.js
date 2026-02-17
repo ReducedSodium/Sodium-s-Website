@@ -41,9 +41,9 @@ const CONFIG = {
         },
         tiktok: {
             name: "TikTok",
-            url: "#",
+            url: "https://www.tiktok.com/@reduceyoursodium",
             icon: "🎵",
-            enabled: false  // Set to true to enable
+            enabled: true  // Set to true to enable
         }
     },
     
@@ -77,6 +77,12 @@ const CONFIG = {
     
     // Custom Links Tab - Add your own custom links here
     customLinks: [
+        {
+            name: "Steam",
+            url: "https://steamcommunity.com/profiles/76561198770013402/",
+            icon: "🎮",
+            description: "Check out my Steam profile"
+        },
         {
             name: "My Portfolio",
             url: "#",
